@@ -29,7 +29,8 @@ def Chat_GPT(message):
         markup.add(raspisan_call)
         bot.send_message(message.chat.id, "Пожалуйсто отправте описание фото:", reply_markup=markup)
 
-        bot.register_next_step_handler(message, generete_image)
+        bot.register_next_step_handler(message, handle_image_message)
+
 
     if message.text == 'ChatGPT':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
@@ -38,6 +39,9 @@ def Chat_GPT(message):
         bot.send_message(message.chat.id, "Пожалуйсто отправте сообщение:", reply_markup=markup)
 
         bot.register_next_step_handler(message, handle_user_message)
+
+    else:
+        bot.send_message(message.chat.id, "Я вас не понимаю напишите /help")
 
 def handle_user_message(message):
     if message.text == "выход":
@@ -50,14 +54,15 @@ def handle_user_message(message):
     else:
         bot.register_next_step_handler(message, handle_user_message)
 
-    bot.send_chat_action(message.chat.id, 'typing')
-    resp = Client.create_completion("gpt3", message.text)
-    translator = Translator()
-    translation = translator.translate(resp, src='en', dest='ru')
+        bot.send_chat_action(message.chat.id, 'typing')
+        resp = Client.create_completion("gpt3", message.text)
+        translator = Translator()
+        translation = translator.translate(resp, src='en', dest='ru')
 
-    bot.send_message(message.chat.id, translation.text)
+        bot.send_message(message.chat.id, translation.text)
 
-def generete_image(message):
+
+def  handle_image_message(message):
     if message.text == "выход":
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
         chat_gpt = types.KeyboardButton("ChatGPT")
@@ -66,10 +71,10 @@ def generete_image(message):
         bot.send_message(message.chat.id, "Выход", reply_markup=markup)
 
     else:
-        bot.register_next_step_handler(message, handle_user_message)
+        bot.register_next_step_handler(message, handle_image_message)  # Зарегистрируйте правильную функцию для следующего шага
 
-    resp = Client.create_generation("pollinations", message.text)
-    bot.send_photo(message.chat.id, BytesIO(resp))
+        resp = Client.create_generation("pollinations", message.text)
+        bot.send_photo(message.chat.id, BytesIO(resp))
 
 
 bot.infinity_polling()
