@@ -13,4 +13,4 @@ Api OpenAI не нужен просто устанавливаем эти биб
 <img src="https://github.com/Vova2808/AI_Bot_Telegram/assets/96084748/351d6b62-9cbd-4a58-8622-32afb0e74871"><br>
 
 <h3>ChatGPT</h3>
-<img src="https://github.com/Vova2808/AI_Bot_Telegram/assets/96084748/c4d11a84-10be-45ba-a78b-7ca2c032dadf">
+<img src="https://github.com/Vova2808/AI_Bot_Telegram/assets/96084748/16e494a9-0ad0-41ce-a8ea-f68721411663">
