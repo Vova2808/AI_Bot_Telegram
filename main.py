@@ -1,11 +1,11 @@
-from freeGPT import Client
+from VortexGPT import Client
 import telebot
 from telebot import types
-from googletrans import Translator
 from io import BytesIO
+from gtts import gTTS
 
 
-bot = telebot.TeleBot('5929520133:AAGpq-gt6I40hlEWx7JgW5qUz4-st3MOTds')
+bot = telebot.TeleBot('YOUR_API_TELEGRAM_BOT')
 
 
 # Start Helop
@@ -32,7 +32,7 @@ def Chat_GPT(message):
         bot.register_next_step_handler(message, handle_image_message)
 
 
-    if message.text == 'ChatGPT':
+    elif message.text == 'ChatGPT':
         markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
         raspisan_call = types.KeyboardButton("выход")
         markup.add(raspisan_call)
@@ -53,13 +53,25 @@ def handle_user_message(message):
 
     else:
         bot.register_next_step_handler(message, handle_user_message)
+        prompt = message.text
 
-        bot.send_chat_action(message.chat.id, 'typing')
-        resp = Client.create_completion("gpt3", message.text)
-        translator = Translator()
-        translation = translator.translate(resp, src='en', dest='ru')
+        try:
+            bot.send_chat_action(message.chat.id, 'typing')
+            resp = Client.create_completion("gpt3", prompt)
 
-        bot.send_message(message.chat.id, translation.text)
+            bot.send_message(message.chat.id, f"GPT: {resp}")
+
+            language = 'ru'
+            obj = gTTS(text=resp, lang=language, slow=False)
+            obj.save("gpt.mp3")
+
+            audio = open('gpt.mp3', 'rb')
+            bot.send_audio(message.chat.id, audio)
+            audio.close()
+
+
+        except Exception as e:
+            bot.send_message(message.chat.id, f"GPT: {e}")
 
 
 def  handle_image_message(message):
@@ -75,6 +87,7 @@ def  handle_image_message(message):
 
         resp = Client.create_generation("pollinations", message.text)
         bot.send_photo(message.chat.id, BytesIO(resp))
+
 
 
 bot.infinity_polling()
